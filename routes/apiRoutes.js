@@ -5,7 +5,6 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", { use
 
 
 module.exports = function(app) {
-    //Return last workout
     app.get("/api/workouts", (req, res) => {
         db.Workout.find({}).sort({_id: -1}).limit(1).populate("exercises").then(data => {
             console.log(data);
@@ -15,7 +14,6 @@ module.exports = function(app) {
           });
     })
 
-    //Receive id of workout and updated data and return json
     app.put("/api/workouts/:id", (req, res) => {
         db.Exercise.create(req.body).then(({ _id }) => db.Workout.findOneAndUpdate({_id: req.params.id}, { $push: { exercises: _id } }, { new: true })).then(data => {
             res.json(data);
@@ -24,7 +22,6 @@ module.exports = function(app) {
           });
     })
 
-    //Receive new workout and insert to DB
     app.post("/api/workouts", (req, res) => {
         console.log((req.body), "from post");
         const workout = new db.Workout(req.body);
@@ -37,7 +34,6 @@ module.exports = function(app) {
         });
     })
 
-    //Return all workouts 
     app.get("/api/workouts/range", (req, res) => {
         db.Workout.find({}).populate("exercises").then(data => {
             res.json(data);
